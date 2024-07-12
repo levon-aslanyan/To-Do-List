@@ -1,13 +1,17 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Box, Button, Flex, Heading, Input } from "@chakra-ui/react";
 import Image from "next/image";
 import ToDoIcon from "/public/list-edit.svg";
 import ToDoItems from "../TodoItems";
-import { useRef, useState } from "react";
 
 const ToDo = () => {
-  const [todoList, setTodoList] = useState([]);
+  const [todoList, setTodoList] = useState(
+    localStorage.getItem("todos")
+      ? JSON.parse(localStorage.getItem("todos"))
+      : []
+  );
   const inputRef = useRef();
 
   const add = () => {
@@ -20,12 +24,33 @@ const ToDo = () => {
     const newTodo = {
       id: Date.now(),
       text: inputText,
-      isComplate: false,
+      isComplete: false,
     };
 
     setTodoList((prev) => [...prev, newTodo]);
     inputRef.current.value = "";
   };
+
+  const deleteTodo = (id) => {
+    setTodoList((prevTodo) => {
+      return prevTodo.filter((todo) => todo.id !== id);
+    });
+  };
+
+  const toggle = (id) => {
+    setTodoList((prvTodo) => {
+      return prvTodo.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, isComplete: !todo.isComplete };
+        }
+        return todo;
+      });
+    });
+  };
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todoList));
+  }, [todoList]);
 
   return (
     <Box
@@ -38,7 +63,7 @@ const ToDo = () => {
       padding="16px"
       borderRadius="25px"
     >
-      <Box display="flex" alignItems="center" mt="10px" gap="8px">
+      <Box display="flex" alignItems="center" mt="10px" gap="15px">
         <Box width="20px" height="100%" position="relative" textAlign="center">
           <Image fill src={ToDoIcon} alt="list" />
         </Box>
@@ -86,7 +111,16 @@ const ToDo = () => {
 
       <Box width="100%">
         {todoList.map((item, index) => {
-          return  <ToDoItems key={index} text={item.text} />;
+          return (
+            <ToDoItems
+              key={index}
+              text={item.text}
+              id={item.id}
+              isComplete={item.isComplete}
+              deleteTodo={deleteTodo}
+              toggle={toggle}
+            />
+          );
         })}
       </Box>
     </Box>
