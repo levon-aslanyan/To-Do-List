@@ -54,7 +54,9 @@ const ToDo = () => {
   };
 
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todoList));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("todos", JSON.stringify(todoList));
+    }
   }, [todoList]);
 
   return (
