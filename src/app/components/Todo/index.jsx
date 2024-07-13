@@ -7,12 +7,17 @@ import ToDoIcon from "/public/list-edit.svg";
 import ToDoItems from "../TodoItems";
 
 const ToDo = () => {
-  const [todoList, setTodoList] = useState(
-    localStorage.getItem("todos")
-      ? JSON.parse(localStorage.getItem("todos"))
-      : []
-  );
+  const [todoList, setTodoList] = useState([]);
   const inputRef = useRef();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedTodos = localStorage.getItem("todos");
+      if (storedTodos) {
+        setTodoList(JSON.parse(storedTodos));
+      }
+    }
+  }, []);
 
   const add = () => {
     const inputText = inputRef.current.value.trim();
@@ -63,7 +68,7 @@ const ToDo = () => {
       padding="16px"
       borderRadius="25px"
     >
-      <Box display="flex" alignItems="center" mt="10px" gap="15px">
+      <Box display="flex" alignItems="center" margin="15px 0" gap="15px">
         <Box width="20px" height="100%" position="relative" textAlign="center">
           <Image fill src={ToDoIcon} alt="list" />
         </Box>
