@@ -19,6 +19,12 @@ const ToDo = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("todos", JSON.stringify(todoList));
+    }
+  }, [todoList]);
+
   const add = () => {
     const inputText = inputRef.current.value.trim();
 
@@ -43,8 +49,8 @@ const ToDo = () => {
   };
 
   const toggle = (id) => {
-    setTodoList((prvTodo) => {
-      return prvTodo.map((todo) => {
+    setTodoList((prevTodo) => {
+      return prevTodo.map((todo) => {
         if (todo.id === id) {
           return { ...todo, isComplete: !todo.isComplete };
         }
@@ -52,12 +58,6 @@ const ToDo = () => {
       });
     });
   };
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("todos", JSON.stringify(todoList));
-    }
-  }, [todoList]);
 
   return (
     <Box
@@ -70,7 +70,7 @@ const ToDo = () => {
       padding="16px"
       borderRadius="25px"
     >
-      <Box display="flex" alignItems="center" margin="15px 0" gap="15px">
+      <Box display="flex" alignItems="center" mt="10px" gap="15px">
         <Box width="20px" height="100%" position="relative" textAlign="center">
           <Image fill src={ToDoIcon} alt="list" />
         </Box>
